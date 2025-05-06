@@ -13,5 +13,7 @@
 - Right : Right arrow key
 * * *
 - Left : Left arrow key
+* * *
 - Down : Down arrow key
+* * *
 - Trun : Up arrow key
