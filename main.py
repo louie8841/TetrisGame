@@ -70,16 +70,20 @@ def merge_piece(piece, board):
 
 def clear_lines(board):
     new_board = [row for row in board if any(cell == 0 for cell in row)]
-    lines_cleared = ROWS - len(new_board)
-    for _ in range(lines_cleared):
+    cleared = ROWS - len(new_board)
+    for _ in range(cleared):
         new_board.insert(0, [0] * COLS)
-    return new_board
+    return new_board, cleared
 
 def draw_button(text, rect, color=WHITE):
     pygame.draw.rect(SCREEN, color, rect, border_radius=10)
     label = FONT.render(text, True, BLACK)
     label_rect = label.get_rect(center=rect.center)
     SCREEN.blit(label, label_rect)
+
+def draw_score(score):
+    text = FONT.render(f"Score: {score}", True, WHITE)
+    SCREEN.blit(text, (10, 10))
 
 def run_game():
     board = create_board()
@@ -91,6 +95,7 @@ def run_game():
     current_piece = Piece(shape, color)
     game_over = False
     running = True
+    score = 0
 
     while running:
         SCREEN.fill(BLACK)
@@ -103,7 +108,15 @@ def run_game():
                 current_piece.y += 1
             else:
                 merge_piece(current_piece, board)
-                board = clear_lines(board)
+                board, cleared = clear_lines(board)
+                if cleared == 1:
+                    score += 100
+                elif cleared == 2:
+                    score += 300
+                elif cleared == 3:
+                    score += 500
+                elif cleared == 4:
+                    score += 800
                 shape, color = random.choice(SHAPES)
                 current_piece = Piece(shape, color)
                 if not valid_position(current_piece, board):
@@ -137,13 +150,16 @@ def run_game():
                     move_time = 0
 
         draw_board(board)
+        draw_score(score)
         if not game_over:
             draw_piece(current_piece)
         else:
-            msg = FONT.render("Game Over!", True, WHITE)
-            SCREEN.blit(msg, msg.get_rect(center=(WIDTH//2, HEIGHT//2 - 40)))
-            restart_btn = pygame.Rect(WIDTH//2 - 80, HEIGHT//2, 160, 50)
-            draw_button("RETRY", restart_btn)
+            msg = FONT.render("Game Over", True, WHITE)
+            score_text = FONT.render(f"Your Score: {score}", True, WHITE)
+            SCREEN.blit(msg, msg.get_rect(center=(WIDTH//2, HEIGHT//2 - 60)))
+            SCREEN.blit(score_text, score_text.get_rect(center=(WIDTH//2, HEIGHT//2 - 20)))
+            restart_btn = pygame.Rect(WIDTH//2 - 80, HEIGHT//2 + 20, 160, 50)
+            draw_button("Restart", restart_btn)
 
         pygame.display.update()
 
@@ -151,7 +167,7 @@ def main():
     while True:
         SCREEN.fill(BLACK)
         start_btn = pygame.Rect(WIDTH//2 - 80, HEIGHT//2 - 25, 160, 50)
-        draw_button("START", start_btn)
+        draw_button("Start", start_btn)
         pygame.display.update()
 
         waiting = True
