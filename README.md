@@ -15,4 +15,4 @@
 - Down : Down arrow key
 - Trun : Up arrow key
 ### Score
-#### 100 point for one line cleared
+#### **100 point for one line cleared**
